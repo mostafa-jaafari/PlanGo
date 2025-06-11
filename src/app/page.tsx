@@ -20,18 +20,18 @@ export default function Home() {
           <textarea 
             placeholder="Write your note here..."
             rows={5}
-            cols={50}
-            
-            className="group p-4 resize-none w-full max-h-60 
+            className="group p-4 resize-none w-full
               outline-none focus:border-neutral-700">
           </textarea>
           <div className="w-full px-4 py-2 flex items-center justify-between">
             text test
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <span className="flex cursor-pointer w-max p-1 rounded-lg hover:bg-neutral-700/50">
                 <Paperclip size={16} />
               </span>
-              <span className="flex cursor-pointer w-max p-1 rounded-full bg-yellow-600">
+              <span 
+                className="flex cursor-pointer w-max p-1 
+                  rounded-full bg-yellow-600 hover:bg-neutral-800 transition-all duration-200">
                 <ArrowUp size={20} />
               </span>
             </div>
