@@ -38,7 +38,7 @@ export default function SideBar() {
     }
   ]
   const [SelectedLink, setSelectedLink] = useState<string | '/'>('/');
-  const [IsSearchOpen, setIsSearchOpen] = useState(true);
+  const [IsSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <main 
       className="min-w-64 bg-neutral-900 overflow-hidden
