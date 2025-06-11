@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import SideBar from "@/components/SideBar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,7 +23,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable}`}
       >
-        {children}
+        <section className="w-full flex gap-4 p-2">
+          <SideBar />
+          {children}
+        </section>
       </body>
     </html>
   );

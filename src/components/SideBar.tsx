@@ -1,8 +1,44 @@
+"use client";
 import { BadgeHelp, Cog, House, Search, Trash2 } from "lucide-react";
 import { GlobalLogo } from "./GlobalLogo";
 import { SideBar_General } from "./SideBar_General";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import SearchComponent from "./SearchComponent";
 
 export default function SideBar() {
+  const Top_Sidebar_Links = [
+    {
+      name: "Home",
+      icon: <House size={16} />,
+      href: "/"
+    },
+    {
+      name: "Search",
+      icon: <Search size={16} />,
+      href: "#"
+    }
+  ]
+  const Bottom_Sidebar_Links = [
+    {
+      name: "Settings",
+      icon: <Cog size={16} />,
+      href: "#settings"
+    },
+    {
+      name: "Help",
+      icon: <BadgeHelp size={16} />,
+      href: "#help"
+    },
+    {
+      name: "Trash",
+      icon: <Trash2 size={16} />,
+      href: "#trash"
+    }
+  ]
+  const [SelectedLink, setSelectedLink] = useState<string | '/'>('/');
+  const [IsSearchOpen, setIsSearchOpen] = useState(true);
   return (
     <main 
       className="min-w-64 bg-neutral-900 overflow-hidden
@@ -13,32 +49,41 @@ export default function SideBar() {
         </section>
         <section className="-space-y-4">
           <ul className="px-4 py-2 flex flex-col gap-1 mb-2">
-            <li 
-              className="flex hover:bg-neutral-800 rounded-lg cursor-pointer p-2 items-center gap-2 text-sm"><Search size={16} />Search</li>
-            <li 
-              className="flex hover:bg-neutral-800 rounded-lg cursor-pointer p-2 items-center gap-2 text-sm"><House size={16} />Home</li>
+            {Top_Sidebar_Links.map((link, index) => (
+              <Link 
+                onClick={link.name.toLowerCase() !== "search" ? () => setSelectedLink(link.href) : () => setIsSearchOpen(true)}
+                key={index} 
+                href={link.href}
+                className={`flex hover:bg-neutral-800 rounded-lg 
+                  cursor-pointer p-2 items-center gap-2 text-sm
+                  ${SelectedLink === link.href ? "bg-neutral-800 text-white" : "text-neutral-400"}`}>
+                  {link.icon}
+                  {link.name}
+              </Link>
+            ))}
           </ul>
           <SideBar_General />
         </section>
         <section>
           <ul className="px-4 py-2 flex flex-col gap-1 mt-2">
-            <li 
-              className="flex hover:bg-neutral-800 rounded-lg 
-                cursor-pointer p-2 items-center gap-2 text-sm">
-                  <Cog size={16} /> Settings
-            </li>
-            <li 
-              className="flex hover:bg-neutral-800 rounded-lg 
-                cursor-pointer p-2 items-center gap-2 text-sm">
-                  <BadgeHelp size={16} /> Help
-            </li>
-            <li 
-              className="flex hover:bg-red-800 rounded-lg text-red-600
-                cursor-pointer p-2 items-center gap-2 text-sm hover:text-white">
-                  <Trash2 size={16} /> Trash
-            </li>
+            {Bottom_Sidebar_Links.map((link, index) => (
+              <Link
+                key={index}
+                href={link.href}
+                className={`flex rounded-lg 
+                  cursor-pointer p-2 items-center gap-2 text-sm
+                  ${link.name.toLowerCase() === "trash" ? "text-red-600 hover:bg-red-600 hover:text-white" : "hover:bg-neutral-800"}`}>
+                    {link.icon} {link.name}
+              </Link>
+            ))}
           </ul>
         </section>
+        {IsSearchOpen && (
+          <SearchComponent 
+            IsSearchOpen={IsSearchOpen}
+            setIsSearchOpen={setIsSearchOpen}
+          />
+        )}
     </main>
   );
 }
