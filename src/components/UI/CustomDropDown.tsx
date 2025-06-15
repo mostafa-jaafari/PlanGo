@@ -69,7 +69,7 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                                 <span 
                                     onClick={() => onSelect(option)}
                                     className="w-full flex items-center gap-2">
-                                    <ClipboardList size={16} />{option} 
+                                    <ClipboardList size={16} />{option.slice(0, 12) + ' ...'}
                                 </span>
                                 <span 
                                     className="p-0.5 cursor-pointer hidden group-hover:block 

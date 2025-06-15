@@ -1,6 +1,7 @@
 "use client";
 import { Bubbles } from "lucide-react";
 import { CustomDropDown } from "./UI/CustomDropDown";
+import { Fake_Notes } from "../FakeData/Fake_Notes";
 
 
 export function SideBar_General(){
@@ -13,13 +14,13 @@ export function SideBar_General(){
             </h1>
             <div className="-space-y-2">
                 <CustomDropDown
-                    options={["Task-1", "Task-2", "Task-3"]}
+                    options={['task-1', 'task-2', 'task-3']}
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Tasks"
                     icon={<Bubbles size={16} />}
                 />
                 <CustomDropDown
-                    options={["Note-1", "Note-2", "Note-3"]}
+                    options={Fake_Notes.map(note => note.title)}
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Notes"
                     icon={<Bubbles size={16} />}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
+import { Search, FileText } from "lucide-react";
 
 
 export default function SearchComponent({ setIsSearchOpen, IsSearchOpen } : { setIsSearchOpen: (isOpen: boolean) => void; IsSearchOpen: boolean }) {
@@ -34,7 +34,7 @@ export default function SearchComponent({ setIsSearchOpen, IsSearchOpen } : { se
     
     return (
         <main 
-            className="w-full h-screen bg-black/40 fixed top-0 left-0 z-50
+            className="w-full h-screen bg-black/40 fixed top-0 left-0 z-40
                 flex justify-center items-center">
             <section 
                 ref={SearchRef}
@@ -42,28 +42,34 @@ export default function SearchComponent({ setIsSearchOpen, IsSearchOpen } : { se
                 overflow-x-hidden overflow-y-scroll">
                 <div>
                     <div 
-                        className={`transition-all duration-300 
+                        className={`flex items-center pl-4 border-b border-neutral-800 transition-all duration-300 
                             ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                        <Search 
+                            className="text-neutral-700" 
+                            size={20} />
                         <input
                             type="text"
+                            autoFocus
                             placeholder="Search notes..."
                             className="w-full h-12 px-4 bg-transparent text-white 
-                            outline-none border-b border-neutral-800"
+                            outline-none placeholder:text-neutral-700"
                             onFocus={() => setIsSearchOpen(true)}
                         />
                     </div>
-                    {/* <div className={`transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="p-4 space-y-4">
+                    <div className={`transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="p-4 space-y-2">
                             {Array(8).fill(0).map((_, index) => (
                                 <div
                                     key={index}
-                                    className="p-4 bg-neutral-800 rounded-lg hover:bg-neutral-700 transition-colors cursor-pointer">
-                                    <h2 className="text-white text-lg">Note Title {index + 1}</h2>
-                                    <p className="text-neutral-400 text-sm">This is a brief description of the note content.</p>
+                                    className="text-neutral-400 px-2 py-2 flex 
+                                    items-center gap-2 hover:bg-neutral-800/50 border 
+                                    border-transparent hover:border-neutral-800 
+                                    rounded-lg transition-colors cursor-pointer">
+                                    <FileText size={25} /> <h2 className="text-sm font-semibold">Note Title {index + 1}</h2>
                                 </div>
                             ))}
                         </div>
-                    </div> */}
+                    </div>
                 </div>
             </section>
         </main>
