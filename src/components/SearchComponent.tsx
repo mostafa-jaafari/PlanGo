@@ -34,14 +34,37 @@ export default function SearchComponent({ setIsSearchOpen, IsSearchOpen } : { se
     
     return (
         <main 
-            ref={SearchRef}
-            className={`fixed z-50 h-screen left-0 w-full bg-black overflow-y-scroll rounded-2xl
-              transform transition-transform duration-500 ease-in-out
-              ${isVisible ? "-translate-y-94" : "translate-y-full"}`}>
-            <section className="h-[300vh]">
-                <button onClick={() => setIsSearchOpen(false)}>
-                    setIsSearchOpen : {IsSearchOpen ? "true" : "false"}
-                </button>
+            className="w-full h-screen bg-black/40 fixed top-0 left-0 z-50
+                flex justify-center items-center">
+            <section 
+                ref={SearchRef}
+                className="h-[80vh] w-[800px] rounded-xl bg-neutral-900 border border-neutral-800
+                overflow-x-hidden overflow-y-scroll">
+                <div>
+                    <div 
+                        className={`transition-all duration-300 
+                            ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                        <input
+                            type="text"
+                            placeholder="Search notes..."
+                            className="w-full h-12 px-4 bg-transparent text-white 
+                            outline-none border-b border-neutral-800"
+                            onFocus={() => setIsSearchOpen(true)}
+                        />
+                    </div>
+                    {/* <div className={`transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="p-4 space-y-4">
+                            {Array(8).fill(0).map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="p-4 bg-neutral-800 rounded-lg hover:bg-neutral-700 transition-colors cursor-pointer">
+                                    <h2 className="text-white text-lg">Note Title {index + 1}</h2>
+                                    <p className="text-neutral-400 text-sm">This is a brief description of the note content.</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div> */}
+                </div>
             </section>
         </main>
     )

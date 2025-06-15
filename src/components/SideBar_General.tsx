@@ -3,7 +3,6 @@ import { Bubbles } from "lucide-react";
 import { CustomDropDown } from "./UI/CustomDropDown";
 
 
-
 export function SideBar_General(){
     return (
         <section>
@@ -15,13 +14,13 @@ export function SideBar_General(){
             <div className="-space-y-2">
                 <CustomDropDown
                     options={["Task-1", "Task-2", "Task-3"]}
-                    onSelect={(option) => alert(`Selected: ${option}`)}
+                    // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Tasks"
                     icon={<Bubbles size={16} />}
                 />
                 <CustomDropDown
                     options={["Note-1", "Note-2", "Note-3"]}
-                    onSelect={(option) => alert(`Selected: ${option}`)}
+                    // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Notes"
                     icon={<Bubbles size={16} />}
                 />

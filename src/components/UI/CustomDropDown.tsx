@@ -1,6 +1,7 @@
 "use client";
 import { Bubbles, ChevronDown, ClipboardList, EllipsisVertical, Plus } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import Link from 'next/link';
 
 interface CustomDropDownProps {
     options: string[];
@@ -35,7 +36,11 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                 <span 
                     onClick={() => setIsOpen(!IsOpen)}
                     className="flex w-full items-center gap-2 text-white">
-                    {icon} {title}
+                    {icon} <Link 
+                                href={`/${title.toLowerCase().replace(' ', '')}`} 
+                                className='hover:underline w-max'>
+                                    {title}
+                            </Link>
                 </span> 
                 <div className="flex items-center gap-1">
                     <span className="p-0.5 cursor-pointer hidden group-hover:flex rounded hover:bg-neutral-700/50">
@@ -55,7 +60,8 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                 <div className={`w-full flex px-6`}>
                     <ul className="w-full border-l border-neutral-800 px-2">
                         {options.map((option, index) => (
-                            <li 
+                            <Link 
+                                href={`/${title.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${option.toLowerCase().replace(/\s+/g, '-')}`}
                                 key={index} 
                                 className={`group w-full px-2 py-1 rounded-lg text-neutral-300
                                     hover:bg-neutral-800 cursor-pointer flex items-center justify-between ${index === 0 && "mt-2"}`}
@@ -65,10 +71,12 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                                     className="w-full flex items-center gap-2">
                                     <ClipboardList size={16} />{option} 
                                 </span>
-                                <span className="p-0.5 cursor-pointer hidden group-hover:block rounded hover:bg-neutral-700/50">
+                                <span 
+                                    className="p-0.5 cursor-pointer hidden group-hover:block 
+                                        rounded hover:bg-neutral-700/50">
                                     <EllipsisVertical size={16} />
                                 </span> 
-                            </li>
+                            </Link>
                         ))}
                     </ul>
                 </div>

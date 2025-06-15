@@ -1,10 +1,12 @@
 
 
 
+
 export default function page({ params }){
+    const Task_Id = params.taskid;
     return (
         <main>
-            test {params.pageid}
+            {Task_Id}
         </main>
     )
 }

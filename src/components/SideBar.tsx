@@ -35,13 +35,17 @@ export default function SideBar() {
       name: "Trash",
       icon: <Trash2 size={16} />,
       href: "#trash"
-    }
+    },{
+      name: "Tasks",
+      icon: <BadgeHelp size={16} />,
+      href: "/tasks"
+    },
   ]
   const [SelectedLink, setSelectedLink] = useState<string | '/'>('/');
   const [IsSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <main 
-      className="min-w-64 bg-neutral-900 overflow-hidden
+      className="min-w-64 h-max sticky top-2 bg-neutral-900 overflow-hidden
         rounded-lg border border-neutral-800">
         <section 
           className="border-b border-neutral-800 w-full py-2 px-4">
