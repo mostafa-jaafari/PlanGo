@@ -13,6 +13,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "lucide-react": "^0.514.0",
     "next": "15.2.2",
+    "next-auth": "^5.0.0-beta.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

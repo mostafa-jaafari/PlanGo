@@ -25,7 +25,12 @@ export default function RootLayout({
       >
         <section className="w-full flex gap-4 p-2">
           <SideBar />
-          {children}
+          <div>
+            <h1 className="text-2xl font-bold mb-4">
+              Welcome to PlanGo
+            </h1>
+            {children}
+          </div>
         </section>
       </body>
     </html>
