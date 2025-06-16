@@ -1,7 +1,4 @@
-import { ToDoLists } from "@/components/Fake_Data";
-import SideBar from "@/components/SideBar";
 import { ArrowUp, Paperclip, Sunset } from "lucide-react";
-// import DynamicPageRendering from "./DynamicPgaeRendering";
 
 export default function Home() {
   return (

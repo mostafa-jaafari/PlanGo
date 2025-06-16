@@ -1,8 +1,8 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { Save } from "lucide-react";
 
-export default function Note_Page({ Note_Id }) {
+export default function Note_Page() {
     const textareaRef = useRef(null);
     const inputTitleRef = useRef(null);
     const [isFilledTitle, setisFilledTitle] = useState(false);
@@ -25,10 +25,7 @@ export default function Note_Page({ Note_Id }) {
     };
     return (
         <main>
-            <section className="w-full h-16 flex items-center justify-end">
-                {/* <h1 className="text-3xl font-bold text-neutral-600 mb-4">
-                    {Note_Id}
-                </h1> */}
+            <section className="w-full flex items-center justify-end">
                 <button 
                     className="py-1 px-2 rounded-lg cursor-pointer flex items-center gap-1
                         bg-yellow-600 hover:bg-yellow-600/50 transition-all duration-200">

@@ -27,9 +27,7 @@ export default function RootLayout({
         <section className="w-full flex gap-4 p-2">
           <SideBar />
           <div className='w-full'>
-            <h1 className="text-2xl font-bold mb-4">
-              <Header />
-            </h1>
+            <Header />
             {children}
           </div>
         </section>

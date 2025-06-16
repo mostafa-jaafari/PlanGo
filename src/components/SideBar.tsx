@@ -3,7 +3,7 @@ import { BadgeHelp, Cog, House, Search, Trash2 } from "lucide-react";
 import { GlobalLogo } from "./GlobalLogo";
 import { SideBar_General } from "./SideBar_General";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { useState } from "react";
 import SearchComponent from "./SearchComponent";
 

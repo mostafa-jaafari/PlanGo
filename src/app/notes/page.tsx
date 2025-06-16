@@ -1,9 +1,7 @@
-import Note_Page from '../Pages/Note_Page';
 import Note_Card from './Note_Card';
 import { Fake_Notes } from '../../FakeData/Fake_Notes';
 
-export default function page({ params }) {
-    const Note_Id = params.noteid;
+export default function page() {
 
     return (
         <main 
