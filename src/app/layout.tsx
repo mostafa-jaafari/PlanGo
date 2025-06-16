@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import SideBar from "@/components/SideBar";
 import Header from "@/components/Header";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,13 +25,15 @@ export default function RootLayout({
       <body
         className={`${inter.variable}`}
       >
-        <section className="w-full flex gap-4 p-2">
-          <SideBar />
-          <div className='w-full'>
-            <Header />
-            {children}
-          </div>
-        </section>
+        <SessionProvider>
+          <section className="w-full flex gap-4 p-2">
+            <SideBar />
+            <div className='w-full'>
+              <Header />
+              {children}
+            </div>
+          </section>
+        </SessionProvider>
       </body>
     </html>
   );
