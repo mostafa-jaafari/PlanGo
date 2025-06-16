@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SideBar from "@/components/SideBar";
+import Header from "@/components/Header";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,9 +26,9 @@ export default function RootLayout({
       >
         <section className="w-full flex gap-4 p-2">
           <SideBar />
-          <div>
+          <div className='w-full'>
             <h1 className="text-2xl font-bold mb-4">
-              Welcome to PlanGo
+              <Header />
             </h1>
             {children}
           </div>
