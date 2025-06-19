@@ -40,7 +40,7 @@ export function SideBar_General(){
                 <CustomDropDown
                     itemicon={<ListTodo size={16} />}
                     options={['task-1', 'task-2', 'task-3']}
-                    onSelect={(option) => alert(`Selected: ${option}`)}
+                    // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Tasks"
                     icon={<Bubbles size={16} />}
                 />
@@ -48,7 +48,7 @@ export function SideBar_General(){
                     isLoading={Notes.length === 0}
                     itemicon={<ClipboardList size={16} />}
                     options={Notes.map(note => note.title)}
-                    onSelect={(option) => alert(`Selected: ${option}`)}
+                    // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Notes"
                     icon={<Bubbles size={16} />}
                 />

@@ -1,13 +1,24 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Save } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/FireBase";
+import { Timestamp } from "firebase/firestore";
 
 
 interface HandleKeyDownEvent {
         key: string;
         preventDefault: () => void;
     }
-export default function Note_Page() {
+interface Note {
+    title: string;
+    date: Timestamp;
+    uuid: string;
+    note_content: string;
+}
+export default function Note_Page({}) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const inputTitleRef = useRef<HTMLInputElement>(null);
     const [isFilledTitle, setisFilledTitle] = useState(false);
@@ -34,8 +45,24 @@ export default function Note_Page() {
             }
         }
     };
+    const params = useParams();
+    const Current_User = useSession()?.data?.user?.email;
+    const [SelectedNote, setSelectedNote] = useState({});
+    useEffect(() => {
+        if(Current_User && params?.noteid){
+            const DocRef = doc(db, 'users', Current_User);
+            const unsubscribe = onSnapshot(DocRef, (snapshot) => {
+                const data = snapshot.data();
+                const NotesData = data?.notes || [];
+                const Selected_Note_Details = NotesData.find((note : Note) => note?.uuid === params?.noteid);
+                setSelectedNote(Selected_Note_Details);
+            });
+            return () => unsubscribe();
+        }
+    }, [params?.noteid, Current_User]);
     return (
         <main>
+            {JSON.stringify(SelectedNote)}
             <section className="w-full flex items-center justify-end">
                 <button 
                     className="py-1 px-2 rounded-lg cursor-pointer flex items-center gap-1
