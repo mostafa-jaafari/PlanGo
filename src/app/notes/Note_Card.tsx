@@ -44,15 +44,21 @@ function Note_Card_Style({ title, date, hrefid }: NoteCardProps) {
   );
 }
 
+interface Note {
+  title: string;
+  date: string;
+}
 export default function Note_Card() {
   const { data: session, status } = useSession();
-  const [Notes, setNotes] = useState<any[]>([]);
+  const [Notes, setNotes] = useState<Note[]>([]);
   const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status !== "authenticated") return;
 
     const Current_User = session?.user?.email;
+    if (!Current_User) return;
+
     const unsubscribe = onSnapshot(doc(db, "users", Current_User), (snapshot) => {
       const User_Notes = snapshot.data()?.notes || [];
       setNotes(User_Notes);
@@ -63,8 +69,8 @@ export default function Note_Card() {
   }, [status, session]);
 
   if (Loading) return (
-    <div className="grid grid-cols-5 gap-4">
-        {Array(5).fill(0).map((_, idx) => (
+    <div>
+        {Array(1).fill(0).map((_, idx) => (
             <section
                 key={idx}
                 className="animate-pulse w-45 h-45 overflow-hidden bg-gradient-to-b from-neutral-900 to-neutral-800 rounded-xl border border-neutral-800"
