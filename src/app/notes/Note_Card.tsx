@@ -13,6 +13,38 @@ interface NoteCardProps {
 }
 
 function Note_Card_Style({ title, date, hrefid }: NoteCardProps) {
+  function formatDate(dateInput: string | { seconds: number }): string {
+    let dateObj: Date;
+
+    if (typeof dateInput === 'object' && dateInput?.seconds) {
+      dateObj = new Date(dateInput.seconds * 1000);
+    } else if (typeof dateInput === 'string') {
+      // Try to parse ISO or fallback to Date constructor
+      dateObj = new Date(dateInput);
+      if (isNaN(dateObj.getTime())) return dateInput;
+    } else {
+      return '';
+    }
+
+    const now = new Date();
+    const diffMs = now.getTime() - dateObj.getTime();
+
+    if (diffMs < 0) return 'in the future';
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30.44);
+    const years = Math.floor(days / 365);
+
+    if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
+    if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return `${seconds} second${seconds !== 1 ? 's' : ''} ago`;
+  }
   return (
     <section
       className="cursor-pointer hover:border-neutral-700 
@@ -32,7 +64,7 @@ function Note_Card_Style({ title, date, hrefid }: NoteCardProps) {
               className="text-neutral-500 mb-2"
             />
             <span className={`text-xs text-neutral-400`}>
-              {date}
+              {formatDate(date)}
             </span>
           </div>
           <div className="text-center h-16 w-[80%]">

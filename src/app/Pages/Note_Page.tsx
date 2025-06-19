@@ -2,25 +2,36 @@
 import { useRef, useState } from "react";
 import { Save } from "lucide-react";
 
+
+interface HandleKeyDownEvent {
+        key: string;
+        preventDefault: () => void;
+    }
 export default function Note_Page() {
-    const textareaRef = useRef(null);
-    const inputTitleRef = useRef(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const inputTitleRef = useRef<HTMLInputElement>(null);
     const [isFilledTitle, setisFilledTitle] = useState(false);
 
     const handleInput = () => {
         const textarea = textareaRef.current;
-        textarea.style.height = "auto";
-        textarea.style.height = `${textarea.scrollHeight}px`;
+        if (textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = `${textarea.scrollHeight}px`;
+        }
     };
 
     const handleInputTitle = () => {
-        setisFilledTitle(inputTitleRef.current.value.length > 0);
+        setisFilledTitle(!!inputTitleRef.current && inputTitleRef.current.value.length > 0);
     };
 
-    const handleKeyDown = (e) => {
+    
+
+    const handleKeyDown = (e: HandleKeyDownEvent) => {
         if (e.key === "Enter") {
             e.preventDefault(); // منع النزول لسطر جديد داخل الـ input
-            textareaRef.current.focus();
+            if (textareaRef.current) {
+                textareaRef.current.focus();
+            }
         }
     };
     return (
@@ -48,7 +59,7 @@ export default function Note_Page() {
                     style={{
                         transition: "max-height 0.3s ease, opacity 0.3s ease",
                         overflow: "hidden",
-                        maxHeight: !isFilledTitle && "0",
+                        maxHeight: !isFilledTitle ? "0" : undefined,
                         opacity: isFilledTitle ? 1 : 0,
                     }}
                 >

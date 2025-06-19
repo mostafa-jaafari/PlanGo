@@ -1,6 +1,6 @@
 "use client";
-import { Bubbles, ChevronDown, ClipboardList, EllipsisVertical, Plus } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { ChevronDown, EllipsisVertical, Plus } from "lucide-react";
+import React, { useState } from "react";
 import Link from 'next/link';
 
 interface CustomDropDownProps {
@@ -9,21 +9,10 @@ interface CustomDropDownProps {
     title: string;
     icon: React.ReactNode;
     itemicon?: React.ReactNode;
+    isLoading?: boolean;
 }
-export function CustomDropDown({ options, onSelect, title, icon, itemicon } : CustomDropDownProps) {
+export function CustomDropDown({ options, onSelect, title, icon, itemicon, isLoading } : CustomDropDownProps) {
     const [IsOpen, setIsOpen] = useState(false);
-    // const dropdownRef = useRef<HTMLButtonElement>(null);
-    // useEffect(() => {
-    //     const HandleHideDropDown = (e: MouseEvent) => {
-    //         if(dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-    //             setIsOpen(false);
-    //         }
-    //     }
-    //     document.addEventListener("mousedown", HandleHideDropDown);
-    //     return () => {
-    //         document.removeEventListener("mousedown", HandleHideDropDown);
-    //     }
-    // },[])
     return (
         <section 
             // ref={dropdownRef}
@@ -56,7 +45,27 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                     </span>
                 </div>
             </button>
-            {IsOpen && (
+            {isLoading && IsOpen ?
+            (
+                <div className="w-full flex px-6">
+                    <ul className="w-full border-l border-neutral-800 px-2">
+                        {[...Array(4)].map((_, index) => (
+                            <li
+                                key={index}
+                                className={`w-full px-2 py-1 rounded-lg flex items-center justify-between ${index === 0 && "mt-2"}`}
+                            >
+                                <span className="w-full flex items-center gap-2">
+                                    <span className="inline-block h-4 w-4 bg-neutral-700 rounded-full animate-pulse"></span>
+                                    <span className="h-4 w-24 bg-neutral-700 rounded animate-pulse"></span>
+                                </span>
+                                <span className="h-4 w-4 bg-neutral-700 rounded animate-pulse"></span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) 
+            :
+            IsOpen && (
                 <div className={`w-full flex px-6`}>
                     <ul className="w-full border-l border-neutral-800 px-2">
                         {options.map((option, index) => (
@@ -69,7 +78,7 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon } : Cu
                                 <span 
                                     onClick={() => onSelect(option)}
                                     className="w-full flex items-center gap-2">
-                                    <ClipboardList size={16} />{option.slice(0, 12) + ' ...'}
+                                    {itemicon}{option.slice(0, 12) + ' ...'}
                                 </span>
                                 <span 
                                     className="p-0.5 cursor-pointer hidden group-hover:block 
