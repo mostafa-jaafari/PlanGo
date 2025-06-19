@@ -7,11 +7,10 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/FireBase";
 import { Timestamp } from "firebase/firestore";
 
-
 interface HandleKeyDownEvent {
-        key: string;
-        preventDefault: () => void;
-    }
+    key: string;
+    preventDefault: () => void;
+}
 interface Note {
     title: string;
     date: Timestamp;
@@ -23,6 +22,10 @@ export default function Note_Page({}) {
     const inputTitleRef = useRef<HTMLInputElement>(null);
     const [isFilledTitle, setisFilledTitle] = useState(false);
 
+    // New states for editable fields
+    const [title, setTitle] = useState("");
+    const [noteContent, setNoteContent] = useState("");
+
     const handleInput = () => {
         const textarea = textareaRef.current;
         if (textarea) {
@@ -31,35 +34,42 @@ export default function Note_Page({}) {
         }
     };
 
-    const handleInputTitle = () => {
-        setisFilledTitle(!!inputTitleRef.current && inputTitleRef.current.value.length > 0);
-    };
-
-    
 
     const handleKeyDown = (e: HandleKeyDownEvent) => {
         if (e.key === "Enter") {
-            e.preventDefault(); // منع النزول لسطر جديد داخل الـ input
+            e.preventDefault();
             if (textareaRef.current) {
                 textareaRef.current.focus();
             }
         }
     };
+
     const params = useParams();
     const Current_User = useSession()?.data?.user?.email;
-    const [SelectedNote, setSelectedNote] = useState({});
+    const [SelectedNote, setSelectedNote] = useState<Note>();
+
     useEffect(() => {
-        if(Current_User && params?.noteid){
+        if (Current_User && params?.noteid) {
             const DocRef = doc(db, 'users', Current_User);
             const unsubscribe = onSnapshot(DocRef, (snapshot) => {
                 const data = snapshot.data();
                 const NotesData = data?.notes || [];
-                const Selected_Note_Details = NotesData.find((note : Note) => note?.uuid === params?.noteid);
+                const Selected_Note_Details = NotesData.find((note: Note) => note?.uuid === params?.noteid);
                 setSelectedNote(Selected_Note_Details);
             });
             return () => unsubscribe();
         }
     }, [params?.noteid, Current_User]);
+
+    // When SelectedNote changes, update title and noteContent states
+    useEffect(() => {
+        if (SelectedNote) {
+            setTitle(SelectedNote.title || "");
+            setNoteContent(SelectedNote.note_content || "");
+            setisFilledTitle(!!SelectedNote.title);
+        }
+    }, [SelectedNote]);
+
     return (
         <main>
             {JSON.stringify(SelectedNote)}
@@ -71,14 +81,17 @@ export default function Note_Page({}) {
                 </button>
             </section>
             <section className={`w-full h-full space-y-8 p-4`}>
-                
                 <input
                     className="w-full bg-transparent border-none outline-none 
                         px-4 text-white text-4xl font-semibold"
                     type="text"
                     ref={inputTitleRef}
-                    onChange={handleInputTitle}
+                    onChange={e => {
+                        setTitle(e.target.value);
+                        setisFilledTitle(e.target.value.length > 0);
+                    }}
                     onKeyDown={handleKeyDown}
+                    value={title}
                     autoFocus
                     placeholder="Type Title..."
                 />
@@ -101,6 +114,8 @@ export default function Note_Page({}) {
                             opacity: isFilledTitle ? 1 : 0,
                         }}
                         disabled={!isFilledTitle}
+                        value={noteContent}
+                        onChange={e => setNoteContent(e.target.value)}
                     ></textarea>
                 </div>
             </section>
