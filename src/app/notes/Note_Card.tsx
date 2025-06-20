@@ -79,6 +79,8 @@ function Note_Card_Style({ title, date, hrefid }: NoteCardProps) {
 interface Note {
   title: string;
   date: string;
+  uuid: string;
+  hrefid: string;
 }
 export default function Note_Card() {
   const { data: session, status } = useSession();
@@ -128,13 +130,12 @@ export default function Note_Card() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {Notes?.map((note, index) => {
-        const hrefid = `${note.title.replace(/\s+/g, '-').toLowerCase()}-${index + 1}`;
         return (
           <Note_Card_Style
             key={index}
-            title={note.title}
-            date={note.date}
-            hrefid={hrefid}
+            title={note?.title}
+            date={note?.date}
+            hrefid={note?.uuid}
           />
         );
       })}

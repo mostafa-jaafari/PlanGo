@@ -72,7 +72,6 @@ export default function Note_Page({}) {
 
     return (
         <main>
-            {JSON.stringify(SelectedNote)}
             <section className="w-full flex items-center justify-end">
                 <button 
                     className="py-1 px-2 rounded-lg cursor-pointer flex items-center gap-1

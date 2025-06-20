@@ -15,7 +15,6 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon, isLoa
     const [IsOpen, setIsOpen] = useState(false);
     return (
         <section 
-            // ref={dropdownRef}
             className="text-sm p-2">
             <button 
                 className="group w-full flex items-center justify-between 
@@ -32,13 +31,16 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon, isLoa
                             </Link>
                 </span> 
                 <div className="flex items-center gap-1">
-                    <span className="p-0.5 cursor-pointer hidden group-hover:flex rounded hover:bg-neutral-700/50">
+                    <Link 
+                        className="p-0.5 cursor-pointer hidden group-hover:flex 
+                            rounded hover:bg-neutral-700/50"
+                        href={title.toLowerCase() === 'notes' ? '/notes/new' : '/tasks/new'}>
                         <Plus size={14} />
-                    </span> 
+                    </Link>
                     <span 
                         onClick={() => setIsOpen(!IsOpen)}
                         className="hover:bg-neutral-700/50 p-0.5 rounded">
-                        <ChevronDown 
+                        <ChevronDown
                             className={`transition-all duration-200 ${!IsOpen && "-rotate-90"}`} 
                             size={16}
                         />
