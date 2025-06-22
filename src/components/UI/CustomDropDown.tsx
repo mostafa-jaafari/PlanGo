@@ -10,8 +10,9 @@ interface CustomDropDownProps {
     icon: React.ReactNode;
     itemicon?: React.ReactNode;
     isLoading?: boolean;
+    uuid: string[];
 }
-export function CustomDropDown({ options, title, icon, itemicon, isLoading } : CustomDropDownProps) {
+export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid } : CustomDropDownProps) {
     const [IsOpen, setIsOpen] = useState(false);
     return (
         <section 
@@ -72,7 +73,7 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading } : C
                     <ul className="w-full border-l border-neutral-800 px-2">
                         {options.map((option, index) => (
                             <Link 
-                                href={`/${uuid.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${option.toLowerCase().replace(/\s+/g, '-')}`}
+                                href={`/${title.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${uuid[index]}`}
                                 key={index} 
                                 className={`group w-full px-2 py-1 rounded-lg text-neutral-300
                                     hover:bg-neutral-800 cursor-pointer flex items-center justify-between ${index === 0 && "mt-2"}`}

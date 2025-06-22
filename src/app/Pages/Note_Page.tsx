@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Save } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { doc, onSnapshot, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, onSnapshot, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/FireBase";
 import { Timestamp } from "firebase/firestore";
 
@@ -45,12 +45,13 @@ export default function Note_Page({}) {
     };
 
     const params = useParams();
-    const Current_User = useSession()?.data?.user?.email;
+    const session = useSession();
+    const Current_User_Email = session?.data?.user?.email;
     const [SelectedNote, setSelectedNote] = useState<Note>();
 
     useEffect(() => {
-        if (Current_User && params?.noteid) {
-            const DocRef = doc(db, 'users', Current_User);
+        if (Current_User_Email && params?.noteid) {
+            const DocRef = doc(db, 'users', Current_User_Email);
             const unsubscribe = onSnapshot(DocRef, (snapshot) => {
                 const data = snapshot.data();
                 const NotesData = data?.notes || [];
@@ -59,7 +60,7 @@ export default function Note_Page({}) {
             });
             return () => unsubscribe();
         }
-    }, [params?.noteid, Current_User]);
+    }, [params?.noteid, Current_User_Email]);
 
     // When SelectedNote changes, update title and noteContent states
     useEffect(() => {
@@ -74,37 +75,54 @@ export default function Note_Page({}) {
     // const HandleCreateNewNote = () => {
     //     if(inputTitleRef.current && inputTitleRef.current.value === '') return;
     //     alert('hello world');
-    //     const DocRef = doc(db, 'users', Current_User);
+    //     const DocRef = doc(db, 'users', Current_User_Email);
     //     // const DocData = 
     // }
     async function HandleCreateNewNote() {
-  if (!Current_User) return;
+        if (!Current_User_Email) return;
 
-  const userDocRef = doc(db, "users", Current_User);
+        const userDocRef = doc(db, "users", Current_User_Email);
 
-  const newNote = {
-    uuid: crypto.randomUUID(), // أو uuidv4() لو عندك uuid مثبت
-    title: title,
-    description: noteContent,
-    createdAt: new Date().toISOString(),
-  };
+        // Determine the note UUID: use params?.noteid if editing, otherwise generate new
+        const noteUuid =
+            typeof params?.noteid === "string"
+                ? params.noteid
+                : (
+                    session?.data?.user?.name?.toLowerCase().replace(" ", "") +
+                    "-" +
+                    crypto.randomUUID()
+                ) || crypto.randomUUID();
 
-  const docSnap = await getDoc(userDocRef);
+        const newNote: Note = {
+            uuid: noteUuid,
+            title: title,
+            note_content: noteContent,
+            date: Timestamp.now(),
+        };
 
-  if (docSnap.exists()) {
-    // إذا المستخدم موجود، نضيف للمصفوفة
-    await updateDoc(userDocRef, {
-      notes: arrayUnion(newNote),
-    });
-  } else {
-    // إذا المستخدم غير موجود، ننشئه مع أول ملاحظة
-    await setDoc(userDocRef, {
-      notes: [newNote],
-    });
-  }
+        const docSnap = await getDoc(userDocRef);
 
-  alert("تمت إضافة الملاحظة الجديدة ✅");
-}
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const notes: Note[] = userData?.notes || [];
+            const noteIndex = notes.findIndex((note) => note.uuid === noteUuid);
+
+            if (noteIndex !== -1) {
+                // Update existing note
+                notes[noteIndex] = { ...notes[noteIndex], ...newNote };
+            } else {
+                // Add new note
+                notes.push(newNote);
+            }
+
+            await updateDoc(userDocRef, { notes });
+        } else {
+            // User doc doesn't exist, create with first note
+            await setDoc(userDocRef, { notes: [newNote] });
+        }
+
+        alert("Note saved successfully ✅");
+    }
     return (
         <main>
             <section className="w-full flex items-center justify-end">

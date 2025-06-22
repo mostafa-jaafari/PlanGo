@@ -136,7 +136,6 @@ export default function Note_Card() {
             title={note?.title}
             date={note?.date}
             hrefid={note?.uuid}
-            uuid={note?.uuid}
           />
         );
       })}

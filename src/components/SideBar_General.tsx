@@ -1,7 +1,6 @@
 "use client";
 import { Bubbles, ClipboardList, ListTodo } from "lucide-react";
 import { CustomDropDown } from "./UI/CustomDropDown";
-import { Fake_Notes } from "../FakeData/Fake_Notes";
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/FireBase";
@@ -43,6 +42,7 @@ export function SideBar_General(){
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Tasks"
                     icon={<Bubbles size={16} />}
+                    uuid={['task-1', 'task-2', 'task-3']}
                 />
                 <CustomDropDown
                     isLoading={Notes.length === 0}
@@ -51,6 +51,7 @@ export function SideBar_General(){
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Notes"
                     icon={<Bubbles size={16} />}
+                    uuid={Notes.map(note => String(note.uuid ?? ""))}
                 />
             </div>
         </section>
