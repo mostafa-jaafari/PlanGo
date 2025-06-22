@@ -5,13 +5,13 @@ import Link from 'next/link';
 
 interface CustomDropDownProps {
     options: string[];
-    onSelect: (option: string) => void;
+    // onSelect: (option: string) => void;
     title: string;
     icon: React.ReactNode;
     itemicon?: React.ReactNode;
     isLoading?: boolean;
 }
-export function CustomDropDown({ options, onSelect, title, icon, itemicon, isLoading } : CustomDropDownProps) {
+export function CustomDropDown({ options, title, icon, itemicon, isLoading } : CustomDropDownProps) {
     const [IsOpen, setIsOpen] = useState(false);
     return (
         <section 
@@ -72,13 +72,13 @@ export function CustomDropDown({ options, onSelect, title, icon, itemicon, isLoa
                     <ul className="w-full border-l border-neutral-800 px-2">
                         {options.map((option, index) => (
                             <Link 
-                                href={`/${title.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${option.toLowerCase().replace(/\s+/g, '-')}`}
+                                href={`/${uuid.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${option.toLowerCase().replace(/\s+/g, '-')}`}
                                 key={index} 
                                 className={`group w-full px-2 py-1 rounded-lg text-neutral-300
                                     hover:bg-neutral-800 cursor-pointer flex items-center justify-between ${index === 0 && "mt-2"}`}
                             >
                                 <span 
-                                    onClick={() => onSelect(option)}
+                                    // onClick={() => onSelect(option)}
                                     className="w-full flex items-center gap-2">
                                     {itemicon}{option.slice(0, 12) + ' ...'}
                                 </span>

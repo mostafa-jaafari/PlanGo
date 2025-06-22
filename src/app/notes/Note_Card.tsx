@@ -128,7 +128,7 @@ export default function Note_Card() {
   )
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {Notes?.map((note, index) => {
         return (
           <Note_Card_Style
@@ -136,6 +136,7 @@ export default function Note_Card() {
             title={note?.title}
             date={note?.date}
             hrefid={note?.uuid}
+            uuid={note?.uuid}
           />
         );
       })}
