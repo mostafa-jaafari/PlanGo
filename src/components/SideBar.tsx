@@ -4,8 +4,9 @@ import { GlobalLogo } from "./GlobalLogo";
 import { SideBar_General } from "./SideBar_General";
 import Link from "next/link";
 // import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchComponent from "./SearchComponent";
+import { usePathname } from "next/navigation";
 
 export default function SideBar() {
   const Top_Sidebar_Links = [
@@ -24,24 +25,39 @@ export default function SideBar() {
     {
       name: "Settings",
       icon: <Cog size={16} />,
-      href: "#settings"
+      href: "/settings"
     },
     {
       name: "Help",
       icon: <BadgeHelp size={16} />,
-      href: "#help"
+      href: "/help"
     },
     {
       name: "Trash",
       icon: <Trash2 size={16} />,
-      href: "#trash"
+      href: "/trash"
     },{
       name: "Tasks",
       icon: <BadgeHelp size={16} />,
       href: "/tasks"
     },
   ]
-  const [SelectedLink, setSelectedLink] = useState<string | '/'>('/');
+  const [SelectedLink, setSelectedLink] = useState<string>('');
+  const pathname = usePathname();
+  useEffect(() => {
+    if(pathname === "/"){
+      setSelectedLink('/');
+    }
+    // else if(pathname === "/settings"){
+    //   setSelectedLink('settings');
+    // }else if(pathname === "/help"){
+    //   setSelectedLink('help');
+    // }else if(pathname.startsWith("/trash")){
+    //   setSelectedLink('trash');
+    // }else{
+    //   setSelectedLink('');
+    // }
+  },[pathname])
   const [IsSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <main 
@@ -55,12 +71,12 @@ export default function SideBar() {
           <ul className="px-4 py-2 flex flex-col gap-1 mb-2">
             {Top_Sidebar_Links.map((link, index) => (
               <Link 
-                onClick={link.name.toLowerCase() !== "search" ? () => setSelectedLink(link.href) : () => setIsSearchOpen(true)}
                 key={index} 
                 href={link.href}
                 className={`flex hover:bg-neutral-800 rounded-lg 
                   cursor-pointer p-2 items-center gap-2 text-sm
-                  ${SelectedLink === link.href ? "bg-neutral-800 text-white" : "text-neutral-400"}`}>
+                  ${SelectedLink === link.href ? "bg-neutral-800 text-white" : "text-neutral-400"}
+                  `}>
                   {link.icon}
                   {link.name}
               </Link>

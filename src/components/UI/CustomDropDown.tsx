@@ -127,6 +127,7 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                             >
                                 <Link
                                     href={`/${title.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${uuid[index]}`}
+                                    className="w-full"
                                 >
                                     <span 
                                         className="w-full flex items-center gap-2">
