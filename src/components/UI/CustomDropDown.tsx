@@ -6,6 +6,7 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { db } from "@/FireBase";
 import { toast, Toaster } from "sonner";
+import { useParams } from "next/navigation";
 
 interface CustomDropDownProps {
     options: string[];
@@ -15,6 +16,11 @@ interface CustomDropDownProps {
     itemicon?: React.ReactNode;
     isLoading?: boolean;
     uuid: string[];
+}
+    // حذف الملاحظة عبر الفلترة وليس الـ index
+interface Note {
+    uuid: string;
+    [key: string]: unknown;
 }
 export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid } : CustomDropDownProps) {
     const [IsOpen, setIsOpen] = useState(false);
@@ -35,22 +41,23 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
     },[])
     const Current_User = useSession();
     const userEmail = Current_User.data?.user?.email;
-    async function HandleDeleteNote(index: number) {
-        if(userEmail){
-            const userDocRef = doc(db, "users", userEmail);
-            const docSnap = await getDoc(userDocRef);
+    
+    const [IsDeleteNoteOpen, setIsDeleteNoteOpen] = useState(false);
+    const NoteIdParams = useParams().noteid as string;
+    async function HandleDeleteNote() {
+  if (userEmail) {
+    const userDocRef = doc(db, "users", userEmail);
+    const docSnap = await getDoc(userDocRef);
 
-            if (!docSnap.exists()) return;
-            const data = docSnap.data();
-            const notes = data.notes || [];
+    if (!docSnap.exists()) return;
+    const data = docSnap.data();
+    const notes = data.notes || [];
 
-            if (index < 0 || index >= notes.length) return; // تحقق من أن المؤشر صحيح
+    const updatedNotes: Note[] = notes.filter((note: Note) => note.uuid !== NoteIdParams);
 
-            notes.splice(index, 1); // حذف العنصر من المصفوفة
-
-            await updateDoc(userDocRef, { notes });
-            toast.success("✅ Note deleted successfully!");
-        }
+    await updateDoc(userDocRef, { notes: updatedNotes });
+    toast.success("✅ Note deleted successfully!");
+  }
 }
     return (
         <section 
@@ -111,12 +118,12 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
             :
             IsOpen && (
                 <div className={`w-full flex px-6`}>
-                    <ul className="w-full border-l border-neutral-800 px-2">
+                    <ul className="w-full border-l space-y-1 border-neutral-800 px-2">
                         {options?.length > 0 ? options.map((option, index) => (
                             <li 
                                 key={index} 
                                 className={`relative group w-full px-2 py-1 rounded-lg text-neutral-300
-                                    hover:bg-neutral-800 cursor-pointer flex items-center justify-between ${index === 0 && "mt-2"}`}
+                                    ${NoteIdParams === uuid[index] ? "bg-neutral-800" : ""} hover:bg-neutral-800 cursor-pointer flex items-center justify-between ${index === 0 && "mt-2"}`}
                             >
                                 <Link
                                     href={`/${title.toLowerCase() === 'tasks' ? 'tasks' : 'notes'}/${uuid[index]}`}
@@ -140,20 +147,21 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                                         <div 
                                             ref={OptionsMenuRef}
                                             className="absolute z-10 bg-black border border-neutral-800
-                                                right-0 mt-2 rounded-lg p-2 min-w-[120px] text-left
+                                                right-0 mt-2 space-y-1 rounded-lg p-2 min-w-[120px] text-left
                                                 text-neutral-300 shadow-lg"
                                         >
                                             <button
-                                                className="w-full text-left px-2 py-1 rounded hover:bg-neutral-700"
-                                                onClick={() => HandleDeleteNote(index)}
-                                            >
-                                                Delete
-                                            </button>
-                                            <button
-                                                className="w-full text-left px-2 py-1 rounded hover:bg-neutral-700"
+                                                className="cursor-pointer w-full text-left px-2 py-1 rounded hover:bg-neutral-700"
                                                 // onClick={handleEdit}
                                             >
                                                 Edit
+                                            </button>
+                                            <button
+                                                className="w-full text-left px-2 py-1 rounded 
+                                                    bg-red-600 hover:bg-red-700 cursor-pointer"
+                                                onClick={() => setIsDeleteNoteOpen(true)}
+                                            >
+                                                Delete
                                             </button>
                                             {/* Add more actions here */}
                                         </div>
@@ -162,8 +170,8 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                             </li>
                         )) : (
                             <li 
-                                className="w-full px-2 py-1 rounded-lg text-neutral-500
-                                    hover:bg-neutral-800 cursor-pointer flex items-center justify-between">
+                                className="w-full px-6 py-1 text-neutral-500
+                                    flex items-center justify-start gap-2">
                                 <span className="w-full flex items-center gap-2">
                                     No {title.toLowerCase()} available
                                 </span>
@@ -172,6 +180,43 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                     </ul>
                 </div>
             )}
+            {IsDeleteNoteOpen && (
+                <div 
+                    className="fixed w-full h-screen flex justify-center 
+                        items-center top-0 left-0 z-50 bg-black/50">
+                    <div 
+                        className="w-[400px] min-h-[100px] bg-neutral-900 
+                        rounded-lg border border-neutral-800 flex py-8
+                        flex-col space-y-6 items-center justify-center">
+                        <h1 className="text-white">Are you sure to <span className="text-red-600 font-semibold">Delete</span> This Note ?</h1>
+                        <div className="w-full flex items-center justify-center gap-4">
+                            <button 
+                                onClick={async () => {
+                                    await HandleDeleteNote();
+                                    setIsDeleteNoteOpen(false);
+                                    setIsOptionsOpen(null);
+                                    setIsOpen(false);
+                                }}
+                                className="bg-red-500 hover:bg-red-600 px-4 py-0.5 
+                                    rounded border border-red-400 cursor-pointer">
+                                        Delete
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setIsDeleteNoteOpen(false);
+                                    setIsOptionsOpen(null);
+                                    setIsOpen(false);
+                                }}
+                                className="bg-neutral-900/20 hover:bg-neutral-800 
+                                    px-4 py-0.5 rounded border border-neutral-800 
+                                    hover:border-neutral-700 cursor-pointer">
+                                        Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
         </section>
     )
 }
