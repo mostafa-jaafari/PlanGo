@@ -119,8 +119,15 @@ export default function NoteList() {
 
   if (loading) {
     return (
-      <div>
-        <section className="animate-pulse w-45 h-45 bg-gradient-to-b from-neutral-900 to-neutral-800 rounded-xl border border-neutral-800" />
+      <div className='w-full grid grid-cols-5 gap-4'>
+        {Array(5).fill(0).map((_, index) => (
+          <section 
+            key={index}
+            className="animate-pulse w-45 h-45 bg-gradient-to-b 
+              from-neutral-900 to-neutral-800 rounded-xl border 
+              border-neutral-800"
+          />
+        ))}
       </div>
     );
   }

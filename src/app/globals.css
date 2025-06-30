@@ -55,18 +55,7 @@ body {
   animation: card-pulse 1.5s infinite linear, card-shimmer 1.5s infinite linear;
   animation-direction: alternate, normal;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
-}
-
-@keyframes card-pulse {
-  0% {
-    box-shadow: 0 2px 8px 0 #ffcc001a;
-  }
-  50% {
-    box-shadow: 0 4px 16px 0 rgba(24,24,27,0.12);
-  }
-  100% {
-    box-shadow: 0 2px 8px 0 rgba(156,163,175,0.08);
-  }
+  border-color: gray;
 }
 
 @keyframes card-shimmer {

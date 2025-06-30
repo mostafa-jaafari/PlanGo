@@ -60,15 +60,6 @@ export default function Note_Page() {
     return () => unsubscribe();
   }, [Current_User_Email, noteId, router]);
 
-  // ✅ تعبئة الحقول عند تغيير الملاحظة المختارة
-  useEffect(() => {
-    if (SelectedNote) {
-      setTitle(SelectedNote.title || "");
-      setNoteContent(SelectedNote.note_content || "");
-      setIsFilledTitle(!!SelectedNote.title);
-    }
-  }, [SelectedNote]);
-
   // ✅ تعديل ارتفاع textarea تلقائياً
   const handleInput = () => {
     const textarea = textareaRef.current;
@@ -77,6 +68,21 @@ export default function Note_Page() {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
+  // ✅ تعبئة الحقول عند تغيير الملاحظة المختارة
+  useEffect(() => {
+  if (SelectedNote) {
+    setTitle(SelectedNote.title || "");
+    setNoteContent(SelectedNote.note_content || "");
+    setIsFilledTitle(!!SelectedNote.title);
+
+    // ✅ إعادة ضبط ارتفاع الـ textarea بعد ملء المحتوى
+    setTimeout(() => {
+      handleInput();
+    }, 0);
+  }
+}, [SelectedNote]);
+
+
 
   // ✅ انتقال من العنوان إلى النص عند الضغط Enter
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -97,7 +103,8 @@ export default function Note_Page() {
 
   // ✅ حفظ أو تعديل الملاحظة بناءً على حالة IsUpdated
   async function handleSaveNote() {
-    if (!Current_User_Email || (title === '' && noteContent === '')) {
+    if(!Current_User_Email) return;
+    if (title === ''){
       toast.info('❗ Please fill in the title or content before saving.');
       return;
     }
@@ -116,7 +123,7 @@ export default function Note_Page() {
     const newNote: Note = {
       uuid: noteUuid,
       title,
-      note_content: noteContent,
+      note_content: noteContent || "",
       date: Timestamp.now(),
     };
 
@@ -131,7 +138,7 @@ export default function Note_Page() {
         notes[existingIndex] = {
         ...notes[existingIndex],
         title,
-        note_content: noteContent,
+        note_content: noteContent || "",
         // لا تغير حقل date، فقط lastupdate
         lastupdate: Timestamp.now(),
         };
@@ -160,16 +167,16 @@ export default function Note_Page() {
       {/* زر الحفظ */}
       <section className="w-full flex items-center justify-end">
         <button
-          disabled={!IsUpdated || title === '' || noteContent === ''}
+          disabled={!IsUpdated || title === ''}
           onClick={handleSaveNote}
           className={`flex items-center gap-2 
-            px-5 py-2 rounded
+            px-5 py-2 rounded-lg
             shadow-lg transition-all duration-200 focus:outline-none 
-            focus:ring-2 focus:ring-yellow-400
-            ${!IsUpdated || title === 's' ? "cursor-not-allowed bg-gradient-to-r from-neutral-900 to-neutral-700 hover:from-neutral-900/70 hover:to-neutral-700/70" : "cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-yellow-600 hover:to-yellow-800"}`}
+            border
+            ${!IsUpdated || title === '' ? "cursor-not-allowed bg-black/20 border-neutral-900/50 text-neutral-600" : "cursor-pointer bg-black border-neutral-900 text-neutral-300 hover:bg-black/70"}`}
         >
-          <Save size={20} className="text-white drop-shadow" />
-          <span className="text-white font-semibold tracking-wide">
+          <Save size={20} className="drop-shadow" />
+          <span className="font-semibold tracking-wide">
         {noteId === "new" ? "Save Note" : "Update Note"}
           </span>
         </button>
@@ -203,7 +210,7 @@ export default function Note_Page() {
         >
           <textarea
             ref={textareaRef}
-            className="w-full border-none outline-none px-4 mt-2 
+            className="w-full min-h-[50vh] border-none outline-none px-4 mt-2 
               resize-none text-neutral-400"
             placeholder="Type Description..."
             onInput={handleInput}

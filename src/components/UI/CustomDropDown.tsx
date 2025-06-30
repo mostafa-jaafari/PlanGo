@@ -6,7 +6,7 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { db } from "@/FireBase";
 import { toast, Toaster } from "sonner";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 interface CustomDropDownProps {
     options: string[];
@@ -44,21 +44,35 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
     
     const [IsDeleteNoteOpen, setIsDeleteNoteOpen] = useState(false);
     const NoteIdParams = useParams().noteid as string;
-    async function HandleDeleteNote() {
-  if (userEmail) {
-    const userDocRef = doc(db, "users", userEmail);
-    const docSnap = await getDoc(userDocRef);
 
-    if (!docSnap.exists()) return;
-    const data = docSnap.data();
-    const notes = data.notes || [];
+    const [selectedNoteToDelete, setSelectedNoteToDelete] = useState<string | null>(null);
+    const router = useRouter();
+    async function HandleDeleteNote(noteUuid: string) {
+        if (!userEmail) return;
 
-    const updatedNotes: Note[] = notes.filter((note: Note) => note.uuid !== NoteIdParams);
+        const userDocRef = doc(db, "users", userEmail);
+        const docSnap = await getDoc(userDocRef);
 
-    await updateDoc(userDocRef, { notes: updatedNotes });
-    toast.success("✅ Note deleted successfully!");
-  }
-}
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        const notes = data.notes || [];
+
+        const updatedNotes: Note[] = notes.filter((note: Note) => note.uuid !== noteUuid);
+
+        await updateDoc(userDocRef, { notes: updatedNotes });
+
+        toast.success("✅ Note deleted successfully!");
+
+        // إذا كنت في صفحة هذه الملاحظة، أعد التوجيه
+        if (noteUuid === NoteIdParams) {
+            router.push('/notes');
+        }
+
+        setIsDeleteNoteOpen(false);
+        setIsOptionsOpen(null);
+        setIsOpen(false);
+        }
+
     return (
         <section 
             className="text-sm p-2">
@@ -160,7 +174,10 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                                             <button
                                                 className="w-full text-left px-2 py-1 rounded 
                                                     bg-red-600 hover:bg-red-700 cursor-pointer"
-                                                onClick={() => setIsDeleteNoteOpen(true)}
+                                                 onClick={() => {
+                                                    setSelectedNoteToDelete(uuid[index]);  // تحفظ الـ uuid الذي تريد حذفه
+                                                    setIsDeleteNoteOpen(true);              // تفتح نافذة التأكيد
+                                                }}
                                             >
                                                 Delete
                                             </button>
@@ -193,15 +210,18 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                         <div className="w-full flex items-center justify-center gap-4">
                             <button 
                                 onClick={async () => {
-                                    await HandleDeleteNote();
+                                    if (selectedNoteToDelete) {
+                                    await HandleDeleteNote(selectedNoteToDelete);
+                                    }
                                     setIsDeleteNoteOpen(false);
                                     setIsOptionsOpen(null);
                                     setIsOpen(false);
                                 }}
                                 className="bg-red-500 hover:bg-red-600 px-4 py-0.5 
-                                    rounded border border-red-400 cursor-pointer">
-                                        Delete
-                            </button>
+                                    rounded border border-red-400 cursor-pointer"
+                                >
+                                Delete
+                                </button>
                             <button 
                                 onClick={() => {
                                     setIsDeleteNoteOpen(false);
