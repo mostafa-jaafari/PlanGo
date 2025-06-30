@@ -163,7 +163,7 @@ export default function Note_Page() {
           disabled={!IsUpdated || title === '' || noteContent === ''}
           onClick={handleSaveNote}
           className={`flex items-center gap-2 
-            px-5 py-2 rounded-full
+            px-5 py-2 rounded
             shadow-lg transition-all duration-200 focus:outline-none 
             focus:ring-2 focus:ring-yellow-400
             ${!IsUpdated || title === 's' ? "cursor-not-allowed bg-gradient-to-r from-neutral-900 to-neutral-700 hover:from-neutral-900/70 hover:to-neutral-700/70" : "cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-yellow-600 hover:to-yellow-800"}`}

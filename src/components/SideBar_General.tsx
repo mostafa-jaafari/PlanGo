@@ -1,5 +1,5 @@
 "use client";
-import { Bubbles, ClipboardList, ListTodo } from "lucide-react";
+import { Bubbles, CalendarCheck2, ClipboardList, File, Folder, ListTodo } from "lucide-react";
 import { CustomDropDown } from "./UI/CustomDropDown";
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -37,20 +37,20 @@ export function SideBar_General(){
             </h1>
             <div className="-space-y-2">
                 <CustomDropDown
-                    itemicon={<ListTodo size={16} />}
+                    itemicon={<CalendarCheck2 size={16} />}
                     options={['task-1', 'task-2', 'task-3']}
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Tasks"
-                    icon={<Bubbles size={16} />}
+                    icon={<Folder size={16} />}
                     uuid={['task-1', 'task-2', 'task-3']}
                 />
                 <CustomDropDown
                     isLoading={Notes.length === 0}
-                    itemicon={<ClipboardList size={16} />}
+                    itemicon={<File size={16} />}
                     options={Notes.map(note => note.title)}
                     // onSelect={(option) => alert(`Selected: ${option}`)}
                     title="Notes"
-                    icon={<Bubbles size={16} />}
+                    icon={<Folder size={16} />}
                     uuid={Notes.map(note => String(note.uuid ?? ""))}
                 />
             </div>
