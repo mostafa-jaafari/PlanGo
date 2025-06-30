@@ -1,15 +1,13 @@
-"use client";
-import { useRef } from "react";
 import Task_Page from "../Pages/Task_Page";
+import TasksNavBar from "./TasksNavBar";
 
-export default function Page({ params }) {
-    const Task_Id = params.taskid;
+export default function Page() {
 
     return (
         <main 
-            className="w-full overflow-y-scroll h-full p-10 p-4 
-                bg-neutral-800 rounded-lg">
-            <Task_Page />
+            className="py-8 bg-red-500/10">
+                <TasksNavBar />
+                <Task_Page />
         </main>
     );
 }
