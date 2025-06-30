@@ -1,18 +1,25 @@
 'use client';
-
-import { FileText } from 'lucide-react';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { onSnapshot, doc } from 'firebase/firestore';
-import { db } from '@/FireBase';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 
 interface TaskCardProps {
   title: string;
-  date: string | { seconds: number; nanoseconds?: number };
-  isUpdated: boolean;
-  hrefid: string;
+  description: string;
+  status: string;
+  priority: string;
+  dueDate: string;
+  assignedTo: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  tags: string[];
+  commentsCount: number;
+  subtasks: {
+    id: string;
+    title: string;
+    completed: boolean;
+  }[];
 }
 
 function formatDate(
@@ -46,105 +53,115 @@ function formatDate(
   return `${seconds} second${seconds !== 1 ? 's' : ''} ago`;
 }
 
-function TaskCard({ title, date, isUpdated, hrefid }: TaskCardProps) {
+function TaskCard({ title, description, priority, commentsCount, subtasks, dueDate, tags, assignedTo }: TaskCardProps) {
   const pathname = usePathname();
   const [PrevPath, setPrevPath] = useState(pathname);
-  const [IsLoadingPath, setIsLoadingPath] = useState(false);
-  const HandleClickedTaskCard = () => {
-    setIsLoadingPath(true);
-  }
+  // const [IsLoadingPath, setIsLoadingPath] = useState(false);
+  // const HandleClickedTaskCard = () => {
+  //   setIsLoadingPath(true);
+  // }
   useEffect(() => {
     if (pathname !== PrevPath) {
       setPrevPath(pathname);
-      setIsLoadingPath(false);
+      // setIsLoadingPath(false);
     }
   }, [])
   return (
     <section
-      className={`cursor-pointer hover:border-neutral-700 
-      ${IsLoadingPath ? "card-loading" : "bg-[linear-gradient(to_bottom,#171717_50%,#000000_50%)]"}
-      hover:shadow shadow-neutral-700/50 hover:scale-102 
-      transition-transform duration-200 w-45 h-45 overflow-hidden 
-       rounded-xl 
-      border border-neutral-800`}
+      className='w-full min-h-40 p-2 bg-black rounded-lg border border-neutral-900'
     >
-      <Link
-        onClick={() => HandleClickedTaskCard()}
-        href={`/tasks/${hrefid}`}>
-        <div className="relative group flex flex-col px-2 py-4 items-center justify-between h-full w-full">
-          <div className="absolute top-0 left-0 text-xs text-neutral-500 p-2">
-            <span className="text-xs text-neutral-600">
-              {formatDate(date)} {isUpdated ? '(updated)' : ''}
-            </span>
-          </div>
-          <div className="w-full text-center pt-4">
-            <span className="text-neutral-400 group-hover:text-white">
-              {title.length > 30 ? `${title.slice(0, 30)}...` : title}
-            </span>
-          </div>
-          <div className="flex justify-center items-center pb-4">
-            <FileText size={30} className="text-neutral-400 group-hover:text-white" />
-          </div>
-        </div>
-      </Link>
+      <div>
+        <span>
+          {title}
+        </span>
+        <span>
+          {description.length > 100 ? `${description.slice(0, 100)}... :` : description}
+        </span>
+      </div>
     </section>
   );
 }
 
-interface Task {
-  title: string;
-  date: string | { seconds: number; nanoseconds?: number };
-  uuid: string;
-  lastupdate?: { seconds: number; nanoseconds?: number };
-}
+// interface Task {
+//   title: string;
+//   date: string | { seconds: number; nanoseconds?: number };
+//   uuid: string;
+//   lastupdate?: { seconds: number; nanoseconds?: number };
+// }
 
 export default function Task_Page() {
-  const { data: session, status } = useSession();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const { data: session, status } = useSession();
+  // const [tasks, setTasks] = useState<Task[]>([]);
+  const tasks = [
+    {
+  id: "task-001",
+  title: "Design new landing page",
+  description: "Create a modern and responsive landing page for the product website.",
+  status: "active", // قيم ممكنة: 'active', 'completed', 'pending', 'archived', إلخ
+  priority: "high", // قيم ممكنة: 'low', 'medium', 'high'
+  dueDate: "2025-07-10T18:00:00Z", // صيغة ISO للتاريخ والوقت
+  createdAt: "2025-06-20T10:00:00Z",
+  assignedTo: {
+    id: "user-123",
+    name: "Mostafa Jaafari",
+    email: "mostafa@example.com",
+  },
+  tags: ["design", "frontend", "UI"],
+  commentsCount: 5,
+  subtasks: [
+    { id: "subtask-001", title: "Create wireframes", completed: true },
+    { id: "subtask-002", title: "Design mockups", completed: false },
+    { id: "subtask-003", title: "Implement responsive CSS", completed: false },
+  ],
+},
+  ];
 
-  useEffect(() => {
-    if (status !== 'authenticated') return;
-    const userEmail = session?.user?.email;
-    if (!userEmail) return;
+  // const [loading, setLoading] = useState(true);
 
-    const unsubscribe = onSnapshot(doc(db, 'users', userEmail), (snapshot) => {
-      const userTasks = snapshot.data()?.tasks || [];
-      setTasks(userTasks);
-      setLoading(false);
-    });
+  // useEffect(() => {
+  //   if (status !== 'authenticated') return;
+  //   const userEmail = session?.user?.email;
+  //   if (!userEmail) return;
 
-    return () => unsubscribe();
-  }, [status, session]);
+  //   const unsubscribe = onSnapshot(doc(db, 'users', userEmail), (snapshot) => {
+  //     const userTasks = snapshot.data()?.tasks || [];
+  //     setTasks(userTasks);
+  //     setLoading(false);
+  //   });
 
-  if (loading) {
-    return (
-      <div className='w-full grid grid-cols-5 gap-4'>
-        {Array(5).fill(0).map((_, index) => (
-          <section
-            key={index}
-            className="animate-pulse w-45 h-45 bg-gradient-to-b 
-              from-neutral-900 to-neutral-800 rounded-xl border 
-              border-neutral-800"
-          />
-        ))}
-      </div>
-    );
-  }
+  //   return () => unsubscribe();
+  // }, [status, session]);
+
+  // if (loading) {
+  //   return (
+  //     <div className='w-full grid grid-cols-5 gap-4'>
+  //       {Array(5).fill(0).map((_, index) => (
+  //         <section
+  //           key={index}
+  //           className="animate-pulse w-45 h-45 bg-gradient-to-b 
+  //             from-neutral-900 to-neutral-800 rounded-xl border 
+  //             border-neutral-800"
+  //         />
+  //       ))}
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 pt-8 gap-4">
       {tasks.map((task, index) => {
-        const isUpdated = !!task.lastupdate;
-        const displayDate = isUpdated ? task.lastupdate : task.date;
-
         return (
           <TaskCard
-            key={index}
+            key={task.id || index}
             title={task.title}
-            date={displayDate}
-            hrefid={task.uuid}
-            isUpdated={isUpdated}
+            description={task.description || "No description provided."}
+            status={task.status}
+            priority={task.priority}
+            dueDate={formatDate(task.dueDate)}
+            assignedTo={task.assignedTo}
+            tags={task.tags || []}
+            commentsCount={task.commentsCount || 0}
+            subtasks={task.subtasks || []}
           />
         );
       })}

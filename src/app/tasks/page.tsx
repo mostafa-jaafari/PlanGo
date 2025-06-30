@@ -5,7 +5,7 @@ export default function Page() {
 
     return (
         <main 
-            className="py-8 bg-red-500/10">
+            className="py-8">
                 <TasksNavBar />
                 <Task_Page />
         </main>
