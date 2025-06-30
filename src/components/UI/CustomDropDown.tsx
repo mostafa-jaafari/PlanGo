@@ -87,11 +87,15 @@ export function CustomDropDown({ options, title, icon, itemicon, isLoading, uuid
                 <span 
                     onClick={() => setIsOpen(!IsOpen)}
                     className="flex w-full items-center gap-2 text-white">
-                    {icon} <Link 
-                                href={`/${title.toLowerCase().replace(' ', '')}`} 
-                                className='hover:underline w-max'>
-                                    {title}
-                            </Link>
+                    {icon}
+                    <Link 
+                        onClick={e => { 
+                            e.stopPropagation(); 
+                        }}
+                        href={`/${title.toLowerCase().replace(' ', '')}`} 
+                        className='hover:underline'>
+                            {title}
+                    </Link>
                 </span> 
                 <div className="flex items-center gap-1">
                     <Link 
