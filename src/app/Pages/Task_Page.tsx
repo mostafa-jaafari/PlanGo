@@ -1,6 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { Ellipsis } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import TaskToggleButton from './TaskToggleButton';
 
 interface TaskCardProps {
   title: string;
@@ -66,18 +70,72 @@ function TaskCard({ title, description, priority, commentsCount, subtasks, dueDa
       // setIsLoadingPath(false);
     }
   }, [])
+  const session = useSession();
   return (
     <section
-      className='w-full min-h-40 p-2 bg-black rounded-lg border border-neutral-900'
+      className='w-full flex flex-col items-center space-y-2 p-4 bg-black rounded-lg 
+        border border-neutral-900'
     >
-      <div>
-        <span>
-          {title}
-        </span>
-        <span>
-          {description.length > 100 ? `${description.slice(0, 100)}... :` : description}
-        </span>
+      {/* -------- Top of Task Card -------- */}
+      <div className='flex items-start justify-between'>
+        {/* -------- Title & Description -------- */}
+        <div className='flex flex-col space-y-2'>
+            {/* -------- Title -------- */}
+          <span>
+            {title}
+          </span>
+            {/* -------- Description -------- */}
+          <span className='text-sm text-neutral-600 pl-2'>
+            {description}
+          </span>
+        </div>
       </div>
+      <div>
+            <TaskToggleButton />
+          </div>
+      {/* -------- Bottom Card -------- */}
+          <hr className='border-neutral-900/50 w-full'/>
+        <div className='w-full flex justify-between items-center pt-2'>
+          <div className='flex items-center space-x-2'>
+            <div className='relative w-9 h-9 border rounded-full overflow-hidden'>
+              <Image
+                src={session?.data?.user?.image as string}
+                alt=''
+                fill
+                className='object-cover'
+              />
+            </div>
+            <div className='flex flex-col items-center text-xs text-neutral-700'>
+              <span>
+                {session?.data?.user?.name || '...'}
+              </span>
+              <span>
+                Mai 31, 2025
+              </span>
+            </div>
+          </div>
+          {/* -------- Options Icon -------- */}
+          <div
+            className='relative bg-red-500 grow flex justify-end'
+          >
+            <span 
+              onClick={() => alert('Options clicked!')}
+              className='flex w-max border border-neutral-900 
+              rounded-full p-1 cursor-pointer hover:bg-neutral-900/40'>
+              <Ellipsis size={16} />
+            </span>
+            <div className='absolute right-0 top-full
+                bg-black border border-neutral-900 rounded-lg p-2'>
+                  {[{label: 'Edit'}, {label: 'Delete'}].map((option, index) => (
+                    <button
+                      key={index}>
+                        {option.label}
+                      </button>
+                    ))}
+              test menu
+            </div>
+          </div>
+        </div>
     </section>
   );
 }
