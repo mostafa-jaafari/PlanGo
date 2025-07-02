@@ -1,5 +1,10 @@
 'use client';
+import { updateDoc, doc, getDoc } from 'firebase/firestore';
 import { useState, useRef, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { db } from '@/FireBase';
+import { Task } from './Task_Page';
+import { toast, Toaster } from 'sonner';
 
 const STATUS_OPTIONS = [
   { label: 'Task Incomplete', value: 'incomplete' },
@@ -7,8 +12,13 @@ const STATUS_OPTIONS = [
   { label: 'Task Completed', value: 'completed' },
 ];
 
-export default function TaskToggle() {
-  const [status, setStatus] = useState<'incomplete' | 'inprogress' | 'completed'>('incomplete');
+type TaskDropDownMenuProps = {
+  CurrentStatus: 'incomplete' | 'inprogress' | 'completed';
+};
+
+export default function TaskDropDownMenu({ CurrentStatus }: TaskDropDownMenuProps) {
+  const session = useSession();
+  const [status, setStatus] = useState<'incomplete' | 'inprogress' | 'completed'>(CurrentStatus);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -27,8 +37,54 @@ export default function TaskToggle() {
 
   const currentStatus = STATUS_OPTIONS.find(opt => opt.value === status);
 
+const HandleChooseStatus = async (newStatus: 'incomplete' | 'inprogress' | 'completed') => {
+  setStatus(newStatus);
+  setMenuOpen(false);
+
+  try {
+    const email = session?.data?.user?.email;
+    if (!email) {
+      toast.info("No email found");
+      return;
+    }
+
+    const userRef = doc(db, "users", email);
+
+    // 🧠 Get the user document first
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      toast.info("User document not found!");
+      return;
+    }
+
+    const userData = userSnap.data();
+    const oldTasks = userData.tasks || [];
+
+    // 🛠 Update task status (you can customize how to identify the task)
+    const updatedTasks = oldTasks.map((task : Task) => {
+      if (task.status === status) {
+        return { ...task, status: newStatus };
+      }
+      return task;
+    });
+
+    // ✅ Save updated tasks
+    await updateDoc(userRef, {
+      tasks: updatedTasks,
+    });
+
+    toast.success("✅ Status updated!");
+  } catch (error) {
+    toast.error(error as string);
+  }
+};
+
   return (
     <div className="relative flex items-center gap-4" ref={menuRef}>
+      <Toaster
+        position='top-center'
+      />
       {/* Button */}
       <button
         onClick={() => setMenuOpen((open) => !open)}
@@ -64,10 +120,7 @@ export default function TaskToggle() {
                 ? opt.value === 'completed' ? "bg-green-500/20" : opt.value === 'inprogress' ? "bg-yellow-400/20" : "bg-red-500/20"
                 : 'hover:opacity-70 hover:bg-neutral-900/10 cursor-pointer'}
               `}
-              onClick={() => {
-              setStatus(opt.value as typeof status);
-              setMenuOpen(false);
-              }}
+              onClick={() => HandleChooseStatus(opt.value as typeof status)}
             >
               <span className="w-2 h-2 rounded-full border flex"/>{opt.label}
             </button>

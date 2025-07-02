@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Ellipsis } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import TaskToggleButton from './TaskToggleButton';
+import TaskDropDownMenu from './TaskDropDownMenu';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/FireBase';
 
@@ -12,9 +12,13 @@ interface TaskCardProps {
   title: string;
   description: string;
   status: string;
+  currenttask: string;
+  date?: string | { seconds: number; nanoseconds?: number };
+  uuid?: string;
+  lastupdate?: { seconds: number; nanoseconds?: number };
 }
 
-function formatDate(
+export function formatDate(
   dateInput: string | { seconds: number; nanoseconds?: number } | undefined | null
 ): string {
   let dateObj: Date | null = null;
@@ -45,13 +49,10 @@ function formatDate(
   return `${seconds} second${seconds !== 1 ? 's' : ''} ago`;
 }
 
-function TaskCard({ title, description }: TaskCardProps) {
+function TaskCard({ title, description, currenttask, date }: TaskCardProps) {
   const pathname = usePathname();
   const [PrevPath, setPrevPath] = useState(pathname);
-  // const [IsLoadingPath, setIsLoadingPath] = useState(false);
-  // const HandleClickedTaskCard = () => {
-  //   setIsLoadingPath(true);
-  // }
+  
   useEffect(() => {
     if (pathname !== PrevPath) {
       setPrevPath(pathname);
@@ -62,7 +63,7 @@ function TaskCard({ title, description }: TaskCardProps) {
   const [IsOptionsOpen, setIsOptionsOpen] = useState(false);
   const MenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const HandleHideMenu = (e) => {
+    const HandleHideMenu = (e: MouseEvent) => {
       if(MenuRef.current && !MenuRef.current.contains(e.target as Node)){
         setIsOptionsOpen(false);
       }
@@ -92,8 +93,14 @@ function TaskCard({ title, description }: TaskCardProps) {
         </div>
       </div>
       <div>
-            <TaskToggleButton />
-          </div>
+        <TaskDropDownMenu
+          CurrentStatus={
+            ['incomplete', 'inprogress', 'completed'].includes(currenttask)
+              ? (currenttask as 'incomplete' | 'inprogress' | 'completed')
+              : 'incomplete'
+          }
+        />
+      </div>
       {/* -------- Bottom Card -------- */}
           <hr className='border-neutral-900/50 w-full'/>
         <div className='w-full flex justify-between items-center pt-2'>
@@ -111,7 +118,7 @@ function TaskCard({ title, description }: TaskCardProps) {
                 {session?.data?.user?.name || '...'}
               </span>
               <span>
-                Mai 31, 2025
+                {formatDate(date)}
               </span>
             </div>
           </div>
@@ -150,81 +157,89 @@ function TaskCard({ title, description }: TaskCardProps) {
   );
 }
 
-interface Task {
+export interface Task {
   title: string;
   date: string | { seconds: number; nanoseconds?: number };
   uuid: string;
   lastupdate?: { seconds: number; nanoseconds?: number };
+  description?: string;
+  status: string; // 'active', 'completed', 'pending', 'archived',
 }
 
 export default function Task_Page() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-//   const tasks = [
-//     {
-//   id: "task-001",
-//   title: "Design new landing page",
-//   description: "Create a modern and responsive landing page for the product website.",
-//   status: "active", // قيم ممكنة: 'active', 'completed', 'pending', 'archived', إلخ
-//   priority: "high", // قيم ممكنة: 'low', 'medium', 'high'
-//   dueDate: "2025-07-10T18:00:00Z", // صيغة ISO للتاريخ والوقت
-//   createdAt: "2025-06-20T10:00:00Z",
-//   assignedTo: {
-//     id: "user-123",
-//     name: "Mostafa Jaafari",
-//     email: "mostafa@example.com",
-//   },
-//   tags: ["design", "frontend", "UI"],
-//   commentsCount: 5,
-//   subtasks: [
-//     { id: "subtask-001", title: "Create wireframes", completed: true },
-//     { id: "subtask-002", title: "Design mockups", completed: false },
-//     { id: "subtask-003", title: "Implement responsive CSS", completed: false },
-//   ],
-// },
-//   ];
-
+  const [Tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const session = useSession();
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
-    if (!session) return;
-    const userEmail = session?.data?.user?.email;
-    if (!userEmail) return;
+    if (!session?.data?.user?.email) return;
 
-    const unsubscribe = onSnapshot(doc(db, 'users', userEmail), (snapshot) => {
-      const userTasks = snapshot.data()?.tasks || [];
-      setTasks(userTasks);
+    const userDocRef = doc(db, "users", session?.data?.user?.email);
+
+    const unsubscribe = onSnapshot(userDocRef, (snapshot) => {
+      const data = snapshot.data();
+      const tasks: Task[] = data?.tasks || [];
+      setTasks(tasks);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [status, session]);
+  }, [session?.data?.user?.email]);
 
   if (loading) {
     return (
-      <div className='w-full grid grid-cols-5 gap-4'>
+      <div className="w-full py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
         {Array(5).fill(0).map((_, index) => (
           <section
-            key={index}
-            className="animate-pulse w-45 h-45 bg-gradient-to-b 
-              from-neutral-900 to-neutral-800 rounded-xl border 
-              border-neutral-800"
-          />
+        key={index}
+        className="flex flex-col items-center space-y-2 p-4 bg-black rounded-lg border border-neutral-900 animate-pulse"
+          >
+        {/* Top of Task Card */}
+        <div className="flex items-start justify-between w-full">
+          {/* Title & Description */}
+          <div className="flex flex-col space-y-2 w-3/4">
+            {/* Title */}
+            <span className="h-4 w-2/3 bg-neutral-800 rounded" />
+            {/* Description */}
+            <span className="h-3 w-1/2 bg-neutral-900 rounded ml-2" />
+          </div>
+        </div>
+        <div className="w-16 h-6 bg-neutral-900 rounded mt-2" />
+        {/* Bottom Card */}
+        <hr className="border-neutral-900/50 w-full" />
+        <div className="w-full flex justify-between items-center pt-2">
+          <div className="flex items-center space-x-2">
+            <div className="relative w-9 h-9 border rounded-full overflow-hidden bg-neutral-900" />
+            <div className="flex flex-col items-center text-xs text-neutral-700">
+          <span className="h-3 w-12 bg-neutral-900 rounded mb-1" />
+          <span className="h-2 w-10 bg-neutral-900 rounded" />
+            </div>
+          </div>
+          {/* Options Icon */}
+          <div className="relative grow flex justify-end">
+            <span className="flex w-max border border-neutral-900 rounded-full p-1">
+          <span className="h-4 w-4 bg-neutral-900 rounded-full" />
+            </span>
+          </div>
+        </div>
+          </section>
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 pt-8 gap-4">
-      {tasks.map((task, index) => {
+    <div className="grid grid-cols-2 py-8 md:grid-cols-3 lg:grid-cols-3 pt-8 gap-4">
+      {Tasks.map((task, index) => {
         return (
           <TaskCard
             key={task.uuid || index}
             title={task.title}
             description={task.description || ""}
             status={task.status}
+            date={task.date}
+            lastupdate={task?.lastupdate}
+            currenttask={task.status || "incomplete"}
           />
         );
       })}
