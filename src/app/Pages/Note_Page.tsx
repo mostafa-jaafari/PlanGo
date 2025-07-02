@@ -210,8 +210,9 @@ export default function Note_Page() {
         >
           <textarea
             ref={textareaRef}
-            className="w-full min-h-[50vh] border-none outline-none px-4 mt-2 
-              resize-none text-neutral-400"
+            className="w-full min-h-[50vh] border-none 
+            outline-none px-4 mt-2 resize-none 
+            text-neutral-400"
             placeholder="Type Description..."
             onInput={handleInput}
             value={noteContent}
