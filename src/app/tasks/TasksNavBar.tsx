@@ -49,15 +49,19 @@ export default function TasksNavBar() {
                     </li>
                 ))}
             </ul>
-            <Link href="/tasks/new">
-                <button
-                    className='group w-13 hover:w-max fixed right-8 bottom-8 bg-yellow-600 text-white px-4 py-2 
-                        rounded-md hover:bg-yellow-700 cursor-pointer
-                        flex items-center gap-8 hover:gap-2 
-                        overflow-hidden transition-all duration-300'>
-                    <PlusIcon className='flex-shrink-0'/> <span className='text-nowrap pr-'>New Task</span>
-                </button>
-            </Link>
+            <button
+                onClick={() => alert('Add Task')}
+                className='group w-13 hover:w-max fixed right-8 bottom-8 bg-yellow-600 text-white px-4 py-2 
+                    rounded-md hover:bg-yellow-700 cursor-pointer
+                    flex items-center gap-8 hover:gap-2 
+                    overflow-hidden transition-all duration-300'>
+                <PlusIcon className='flex-shrink-0'/> <span className='text-nowrap pr-'>New Task</span>
+            </button>
+            <div 
+                className='absolute top-0 left-0 w-full 
+                h-screnn bg-black/20'>
+                    test
+            </div>
         </section>
     )
 }

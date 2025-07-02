@@ -230,7 +230,7 @@ export default function Task_Page() {
 
   return (
     <div className="grid grid-cols-2 py-8 md:grid-cols-3 lg:grid-cols-3 pt-8 gap-4">
-      {Tasks.map((task, index) => {
+      {Tasks?.length > 0 ? Tasks.map((task, index) => {
         return (
           <TaskCard
             key={task.uuid || index}
@@ -242,7 +242,13 @@ export default function Task_Page() {
             currenttask={task.status || "incomplete"}
           />
         );
-      })}
+      }) : (
+        <div>
+          <h2 className="text-center text-neutral-500">
+            No tasks available. Please add a task.
+          </h2>
+        </div>
+      )}
     </div>
   );
 }
