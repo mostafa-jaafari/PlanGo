@@ -34,7 +34,7 @@ export default function SearchComponent({ setIsSearchOpen, IsSearchOpen } : { se
     
     return (
         <main 
-            className="w-full h-screen bg-black/40 fixed top-0 left-0 z-40
+            className="w-full h-screen bg-black/40 fixed top-0 left-0 z-50
                 flex justify-center items-center">
             <section 
                 ref={SearchRef}
