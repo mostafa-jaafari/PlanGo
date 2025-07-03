@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Ellipsis, GripHorizontal, OctagonAlert, Pen, PlusIcon, Trash2, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
