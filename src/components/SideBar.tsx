@@ -25,21 +25,21 @@ export default function SideBar() {
     {
       name: "Settings",
       icon: <Cog size={16} />,
-      href: "/settings"
+      href: "/"
     },
     {
       name: "Help",
       icon: <BadgeHelp size={16} />,
-      href: "/help"
+      href: "/"
     },
     {
       name: "Trash",
       icon: <Trash2 size={16} />,
-      href: "/trash"
+      href: "/"
     },{
       name: "Tasks",
       icon: <BadgeHelp size={16} />,
-      href: "/tasks"
+      href: "/"
     },
   ]
   const [SelectedLink, setSelectedLink] = useState<string>('');
@@ -73,6 +73,7 @@ export default function SideBar() {
               <Link 
                 key={index} 
                 href={link.href}
+                onClick={link.name.toLowerCase() === "search" ? () => setIsSearchOpen(!IsSearchOpen) : undefined}
                 className={`flex hover:bg-neutral-800 rounded-lg 
                   cursor-pointer p-2 items-center gap-2 text-sm
                   ${SelectedLink === link.href ? "bg-neutral-800 text-white" : "text-neutral-400"}
