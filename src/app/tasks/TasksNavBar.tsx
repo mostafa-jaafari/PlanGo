@@ -1,13 +1,7 @@
 'use client';
-import { db } from '@/FireBase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { AlertCircle, CheckCircle, Clock, List, PlusIcon, X } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { AlertCircle, CheckCircle, Clock, List } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { v4 as uuidv4 } from "uuid";
 
 
 const NavBar_Links = [
@@ -22,12 +16,12 @@ const NavBar_Links = [
     icon: CheckCircle,
   },
   {
-    href: '?sort=pending',
+    href: '?sort=inprogress',
     label: 'Pending Tasks',
     icon: Clock,
   },
   {
-    href: '?sort=overdue',
+    href: '?sort=incomplete',
     label: 'Overdue Tasks',
     icon: AlertCircle,
   }
