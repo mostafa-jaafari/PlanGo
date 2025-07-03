@@ -1,5 +1,5 @@
 "use client";
-import { Bubbles, CalendarCheck2, ClipboardList, File, Folder, ListTodo } from "lucide-react";
+import { File, Folder, ListTodo } from "lucide-react";
 import { CustomDropDown } from "./UI/CustomDropDown";
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
