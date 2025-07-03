@@ -1,8 +1,13 @@
 'use client';
-import { AlertCircle, CheckCircle, Clock, List, PlusIcon } from 'lucide-react';
+import { db } from '@/FireBase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { AlertCircle, CheckCircle, Clock, List, PlusIcon, X } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { v4 as uuidv4 } from "uuid";
 
 
 const NavBar_Links = [
@@ -29,9 +34,11 @@ const NavBar_Links = [
 ];
 
 export default function TasksNavBar() {
+
     const ParamsId = useSearchParams().get('sort') || 'all';
+    
     return (
-        <section className="w-full border-b border-neutral-900 flex items-center justify-between">
+        <main className="w-full border-b border-neutral-900 flex items-center justify-between">
             <ul>
                 {NavBar_Links.map((link, index) => (
                     <li key={index} className="inline-block mr-4">
@@ -49,19 +56,6 @@ export default function TasksNavBar() {
                     </li>
                 ))}
             </ul>
-            <button
-                onClick={() => alert('Add Task')}
-                className='group w-13 hover:w-max fixed right-8 bottom-8 bg-yellow-600 text-white px-4 py-2 
-                    rounded-md hover:bg-yellow-700 cursor-pointer
-                    flex items-center gap-8 hover:gap-2 
-                    overflow-hidden transition-all duration-300'>
-                <PlusIcon className='flex-shrink-0'/> <span className='text-nowrap pr-'>New Task</span>
-            </button>
-            <div 
-                className='absolute top-0 left-0 w-full 
-                h-screnn bg-black/20'>
-                    test
-            </div>
-        </section>
+        </main>
     )
 }
