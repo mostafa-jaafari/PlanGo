@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "@/FireBase";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface Note {
     title: string;
@@ -36,14 +37,16 @@ export function SideBar_General(){
                 General
             </h1>
             <div className="-space-y-2">
-                <CustomDropDown
-                    itemicon={<CalendarCheck2 size={16} />}
-                    options={['task-1', 'task-2', 'task-3']}
-                    // onSelect={(option) => alert(`Selected: ${option}`)}
-                    title="Tasks"
-                    icon={<Folder size={16} />}
-                    uuid={['task-1', 'task-2', 'task-3']}
-                />
+                <div className="px-2">
+                    <Link 
+                        className="group w-full flex items-center 
+                            justify-start gap-2 px-4 py-2
+                            text-white text-sm hover:underline rounded-lg focus:outline-none focus:ring-1
+                            focus:ring-neutral-800 hover:bg-neutral-800"
+                        href="/tasks">
+                        <ListTodo size={16} /> Tasks
+                    </Link>
+                </div>
                 <CustomDropDown
                     isLoading={Notes.length === 0}
                     itemicon={<File size={16} />}
